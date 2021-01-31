@@ -1,0 +1,12 @@
+Realization of small functional kernel of operating
+system which includes threads with time-sharing
+technique, interrupts, context switching, event
+handling and semaphores.
+
+///////////////
+
+Realizacija jezgra (engl. kernel) operativnog
+sistema koji podrzava niti (engl. multithreaded
+operating system) sa deljenjem vremena (engl.
+time sharing). Koncepti semafora (engl.
+semaphore) i dogadjaja (engl. event).
