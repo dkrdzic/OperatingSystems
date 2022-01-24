@@ -10,27 +10,21 @@
 
 #include "Event.h"
 
-
-
 class PCB;
 
-
-
-
-
-class KernelEvent {
+class KernelEvent
+{
 private:
 	KernelEvent(IVTNo ivtNo);
 	virtual ~KernelEvent();
 	void wait();
 	void signal();
-	PCB* myPCB;
-friend class Event;
-friend class PCB;
-friend class IVTEntry;
-IVTNo ivtNo;
-int blocked;
-
+	PCB *myPCB;
+	friend class Event;
+	friend class PCB;
+	friend class IVTEntry;
+	IVTNo ivtNo;
+	int blocked;
 };
 
 #endif /* KEVENT_H_ */

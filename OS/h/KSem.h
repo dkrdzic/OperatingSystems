@@ -10,29 +10,23 @@
 
 #include "PCB.h"
 
-class KernelSem {
+class KernelSem
+{
 private:
 	KernelSem(int init);
 	virtual ~KernelSem();
 
 	friend class Semaphore;
-friend class System;
-friend class List;
+	friend class System;
+	friend class List;
 
 	int val;
-volatile ID id;
-static ID static_id;
-	int wait (Time maxTimeToWait);
-	  int signal(int n);
+	volatile ID id;
+	static ID static_id;
+	int wait(Time maxTimeToWait);
+	int signal(int n);
 
-
-
-static volatile List* blockedThreads;
-
-
-
-
-
+	static volatile List *blockedThreads;
 };
 
 #endif /* KSEM_H_ */

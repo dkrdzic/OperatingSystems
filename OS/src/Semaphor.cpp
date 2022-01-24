@@ -9,40 +9,37 @@
 #include "PCB.h"
 #include "KSem.h"
 #include "Semaphor.h"
-Semaphore::Semaphore(int init) {
-lock;
-
-myImpl=new KernelSem(init);
-unlock;
-
-}
-
-Semaphore::~Semaphore() {
+Semaphore::Semaphore(int init)
+{
 	lock;
-delete myImpl;
+
+	myImpl = new KernelSem(init);
 	unlock;
 }
 
-int Semaphore::wait(Time maxTimeToWait){
-lock;
-myImpl->wait(maxTimeToWait);
-unlock;
-
+Semaphore::~Semaphore()
+{
+	lock;
+	delete myImpl;
+	unlock;
 }
 
-int Semaphore::signal(int n){
-lock;
-myImpl->signal(n);
-unlock;
-
-
+int Semaphore::wait(Time maxTimeToWait)
+{
+	lock;
+	myImpl->wait(maxTimeToWait);
+	unlock;
 }
 
+int Semaphore::signal(int n)
+{
+	lock;
+	myImpl->signal(n);
+	unlock;
+}
 
-int Semaphore::val() const{
+int Semaphore::val() const
+{
 
-
-return myImpl->val;
-
-
+	return myImpl->val;
 }

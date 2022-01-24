@@ -10,51 +10,57 @@
 #include "IVTEntry.h"
 #include "SCHEDULE.H"
 #include <stdio.h>
-KernelEvent::KernelEvent(IVTNo ivtNo) {
+KernelEvent::KernelEvent(IVTNo ivtNo)
+{
 
-lock;
-myPCB=(PCB*)PCB::running;
-blocked=0;
+	lock;
+	myPCB = (PCB *)PCB::running;
+	blocked = 0;
 
-IVTEntry::entry[ivtNo]->myEvent=this;
+	IVTEntry::entry[ivtNo]->myEvent = this;
 
-this->ivtNo=ivtNo;
-unlock;
-
-
-
+	this->ivtNo = ivtNo;
+	unlock;
 }
 
-KernelEvent::~KernelEvent() {
+KernelEvent::~KernelEvent()
+{
 
-lock;
+	lock;
 
-		IVTEntry::entry[ivtNo]->myEvent==0;
-if (blocked) signal();
-unlock;
+	IVTEntry::entry[ivtNo]->myEvent == 0;
+	if (blocked)
+		signal();
+	unlock;
 }
 
-void KernelEvent::wait(){
-lock;
-	if (myPCB!=PCB::running) {unlock; return;}
+void KernelEvent::wait()
+{
+	lock;
+	if (myPCB != PCB::running)
+	{
+		unlock;
+		return;
+	}
 
-blocked=1;
-myPCB->threadState=BLOCKED;
+	blocked = 1;
+	myPCB->threadState = BLOCKED;
 	dispatch();
 	unlock;
-
 }
 
+void KernelEvent::signal()
+{
+	lock;
+	if (blocked == 0)
+	{
+		unlock;
+		return;
+	}
 
-void KernelEvent:: signal(){
-lock;
-if (blocked==0){unlock; return;}
+	blocked = 0;
+	myPCB->threadState = READY;
+	Scheduler::put(myPCB);
 
-blocked=0;
-myPCB->threadState=READY;
-Scheduler::put(myPCB);
-
-unlock;
-
-
+	unlock;
 }

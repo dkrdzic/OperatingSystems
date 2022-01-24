@@ -7,161 +7,141 @@
  *      Author: OS1
  */
 
-
-
 #include "List.h"
 #include "System.h"
 #include "stdio.h"
 
 #include "PCB.h"
 #include "SCHEDULE.H"
-int Thread:: static_id=0;
+int Thread::static_id = 0;
 
+Thread::Thread(StackSize stackSize, Time timeSlice)
+{
 
+	lock;
+	id = ++static_id;
 
-Thread::Thread(StackSize stackSize, Time timeSlice){
+	myPCB = new PCB(stackSize, timeSlice, this);
 
-lock;
-	id=++static_id;
+	deleted = 0;
 
-myPCB=new PCB(stackSize, timeSlice, this);
-
-deleted=0;
-
-
-unlock;
+	unlock;
 }
 
-Thread:: Thread(ID id){
-lock;
+Thread::Thread(ID id)
+{
+	lock;
 
-this->id=id;
-myPCB=0;
-deleted=0;
-unlock;
-
+	this->id = id;
+	myPCB = 0;
+	deleted = 0;
+	unlock;
 }
 
-
-
-void Thread:: start(){
+void Thread::start()
+{
 
 	lock;
 
-	if (myPCB->threadState==NEW)
-	((PCB*)(myPCB))->start();
+	if (myPCB->threadState == NEW)
+		((PCB *)(myPCB))->start();
 
-
-  unlock;
-
+	unlock;
 }
 
-void Thread:: createMainThread(){
-lock;
+void Thread::createMainThread()
+{
+	lock;
 
-	System::threadMain=new Thread(0);
-	System::threadMain->myPCB=new PCB();
+	System::threadMain = new Thread(0);
+	System::threadMain->myPCB = new PCB();
 
-
-unlock;
+	unlock;
 }
 
+void Thread::run() {}
 
-void Thread:: run(){}
+Thread *Thread::getThreadById(ID id)
+{
 
-
-Thread* Thread:: getThreadById(ID id){
-
-return  ((List*)(PCB::allThreads))->getThreadById(id);
-
+	return ((List *)(PCB::allThreads))->getThreadById(id);
 }
 
+ID Thread::getID() { return id; }
 
+ID Thread::getRunningId() { return ((Thread *)(PCB::running->myThread))->getID(); }
 
-ID Thread:: getID(){    return id;}
-
-ID Thread::getRunningId(){return ((Thread*)(PCB::running->myThread))->getID();}
-
-void Thread::waitToComplete(){
+void Thread::waitToComplete()
+{
 
 	lock;
 
+	if (myPCB->threadState == FINISHED)
+	{
+		unlock;
+		return;
+	}
 
-	if (myPCB->threadState==FINISHED )
-	{unlock; return;}
+	if (myPCB->threadState == NEW)
+	{
+		unlock;
+		return;
+	}
 
+	if (myPCB == PCB::running)
+	{
+		unlock;
+		return;
+	}
 
-	if (myPCB->threadState==NEW )
-		{unlock; return;}
+	if (this == System::help)
+	{
+		unlock;
+		return;
+	}
 
+	if (this == System::threadMain)
+	{
+		unlock;
+		return;
+	}
 
-	if	(myPCB==PCB::running)
-	{unlock; return;}
+	if (deleted == 1)
+	{
+		unlock;
+		return;
+	}
 
+	PCB::running->threadState = BLOCKED;
 
-	if 	(this==System::help)
-	{unlock; return;}
+	PCB::running->waitingFor = myPCB->myThread->id;
 
+	((List *)(PCB::waitingThreads))->add((PCB *)PCB::running);
 
-	if( this==System::threadMain)
-	{unlock; return;}
-
-if(deleted==1){
-	unlock; return;
+	dispatch();
+	unlock;
 }
 
+Thread::~Thread()
+{
 
+	lock;
 
- PCB:: running->threadState=BLOCKED;
-
-
-PCB::running->waitingFor=myPCB->myThread->id;
-
-((List*)(PCB::waitingThreads))->add((PCB*)PCB::running);
-
-
-
-  dispatch();
-unlock;
-
-
-
-
-
-}
-
-
-
-Thread::~Thread() {
-
-lock;
-
-waitToComplete();
+	waitToComplete();
 
 	delete myPCB;
-myPCB=0;
-deleted=1;
+	myPCB = 0;
+	deleted = 1;
 
-   unlock;
+	unlock;
 }
 
+void dispatch()
+{
+	lock;
 
+	System::contextSwitchRequest = 1;
+	System::timer();
 
-void dispatch(){
-lock;
-
-System::contextSwitchRequest=1;
-System::timer();
-
-
-unlock;
-
-
+	unlock;
 }
-
-
-
-
-
-
-

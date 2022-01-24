@@ -9,35 +9,33 @@
 #include "KEvent.h"
 #include "PCB.h"
 
-
-Event::Event(IVTNo ivtNo) {
+Event::Event(IVTNo ivtNo)
+{
 	lock;
-myImpl=new KernelEvent(ivtNo);
-unlock;
-
-
+	myImpl = new KernelEvent(ivtNo);
+	unlock;
 }
 
-Event::~Event() {
+Event::~Event()
+{
 	lock;
 	delete myImpl;
 	unlock;
 }
 
-
-void Event::wait(){
+void Event::wait()
+{
 
 	lock;
 
 	myImpl->wait();
 	unlock;
-
 }
 
-void Event::signal(){
+void Event::signal()
+{
 
 	lock;
 	myImpl->signal();
 	unlock;
-
 }

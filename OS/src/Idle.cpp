@@ -9,30 +9,28 @@
 #include "PCB.h"
 #include <stdio.h>
 
-Idle::Idle(): Thread(4096,1) {
-
-
+Idle::Idle() : Thread(4096, 1)
+{
 }
 
-Idle::~Idle() {
-
-
+Idle::~Idle()
+{
 }
 
-void Idle::run(){
-//	lock
-//printf("U idle sam!");
-//	unlock;
-	while(1);
-
+void Idle::run()
+{
+	//	lock
+	//printf("U idle sam!");
+	//	unlock;
+	while (1)
+		;
 }
 
-void Idle:: start(){
+void Idle::start()
+{
 
 	lock;
 
-myPCB->threadState=IDLE;
-unlock;
-
-
+	myPCB->threadState = IDLE;
+	unlock;
 }

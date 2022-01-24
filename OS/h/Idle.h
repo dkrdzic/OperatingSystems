@@ -9,13 +9,12 @@
 #define IDLE_H_
 #include "Thread.h"
 
-
-class Idle:public Thread {
+class Idle : public Thread
+{
 private:
-
-friend class PCB;
-friend class Thread;
-friend class System;
+	friend class PCB;
+	friend class Thread;
+	friend class System;
 	Idle();
 	virtual ~Idle();
 	virtual void run();

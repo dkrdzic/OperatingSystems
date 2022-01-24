@@ -11,25 +11,22 @@
 typedef unsigned char IVTNo;
 class KernelEvent;
 
-class Event {
-
+class Event
+{
 
 public:
+   Event(IVTNo ivtNo);
 
+   ~Event();
 
-	Event (IVTNo ivtNo);
-
-	~Event ();
-
-   void wait  ();
+   void wait();
 
 protected:
    friend class KernelEv;
    void signal(); // can call KernelEv
 
 private:
-   KernelEvent* myImpl;
-
+   KernelEvent *myImpl;
 };
 
 #endif /* EVENT_H_ */

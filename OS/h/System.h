@@ -8,40 +8,33 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
+typedef void interrupt (*routine)(...);
 
-
-typedef void interrupt(*routine)(...);
-
-
-
-
-class System {
-private :
+class System
+{
+private:
 	System();
 	virtual ~System();
 
-
-static volatile int contextSwitchRequest;
+	static volatile int contextSwitchRequest;
 	static void interrupt timer(...);
-static void initSystem();
-static void restoreSystem();
-friend class Thread;
-friend class PCB;
-friend class List;
-friend class Idle;
+	static void initSystem();
+	static void restoreSystem();
+	friend class Thread;
+	friend class PCB;
+	friend class List;
+	friend class Idle;
 
+	friend int main(int argc, char *argv[]);
+	//friend int main();
+	friend void dispatch();
+	static volatile Idle *help;
+	static volatile Thread *threadMain;
 
-friend int main(int argc, char* argv[]);
-//friend int main();
-friend void dispatch();
-static volatile Idle* help;
-static volatile  Thread* threadMain;
-
-static routine old;
+	static routine old;
 
 public:
-static void tick();
-
+	static void tick();
 };
 
 #endif /* SYSTEM_H_ */

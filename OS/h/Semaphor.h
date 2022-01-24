@@ -14,22 +14,19 @@ typedef unsigned int Time;
 class KernelSem;
 
 class Semaphore
-{ public:
+{
+public:
+  Semaphore(int init = 1);
 
-	Semaphore (int init=1);
+  virtual ~Semaphore();
 
+  virtual int wait(Time maxTimeToWait);
+  virtual int signal(int n = 0);
 
-virtual ~Semaphore ();
-
-  virtual int wait (Time maxTimeToWait);
-  virtual int signal(int n=0);
-
-  int val () const;  // Returns the current value of the semaphore
-
-
+  int val() const; // Returns the current value of the semaphore
 
 private:
-  KernelSem* myImpl;
+  KernelSem *myImpl;
 };
 
 #endif /* SEMAPHOR_H_ */
